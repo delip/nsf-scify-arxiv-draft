@@ -124,7 +124,7 @@ breaklines=true
 \maketitle
 \begin{abstract}
 
-We present \DatasetName, a large-scale dataset for scientific claim extraction derived from the \NSF~(NSF) awards database, comprising over 400K grant abstracts spanning multiple decades. While previous datasets relied on published literature, we leverage grant abstracts which offer a unique advantage: they capture claims at an earlier stage in the research lifecycle before publication takes effect. We also introduce a new task  to distinguish between existing scientific claims and aspirational research intentions in proposals.Using zero-shot prompting with frontier large language models, we jointly extract 114K scientific claims and 145K investigation proposals from 16K proposals in the materials science domain to create a focused subset called \DatasetNameMatSci. We use this dataset to evaluate 3 three key tasks: (1) technical to non-technical abstract generation, where models achieve high BERTScore (0.85+ F1); (2) scientific claim extraction, where fine-tuned models outperform base models by 100\% relative improvement; and (3) investigation proposal extraction, showing 90\%+ improvement with fine-tuning. We introduce novel LLM-based evaluation metrics for robust assessment of claim/proposal extraction quality. As the largest scientific claim dataset to date -- with an estimated 2.8 million claims across all disciplines -- \DatasetName~enables new opportunities for claim verification and meta-scientific research. We publicly release all datasets, trained models, and evaluation code to facilitate further research.
+We present \DatasetName, a large-scale dataset for scientific claim extraction derived from the \NSF~(NSF) awards database, comprising over 400K grant abstracts spanning five decades. While previous datasets relied on published literature, we leverage grant abstracts which offer a unique advantage: they capture claims at an earlier stage in the research lifecycle before publication takes effect. We also introduce a new task  to distinguish between existing scientific claims and aspirational research intentions in proposals.Using zero-shot prompting with frontier large language models, we jointly extract 114K scientific claims and 145K investigation proposals from 16K grant abstracts in the materials science domain to create a focused subset called \DatasetNameMatSci. We use this dataset to evaluate 3 three key tasks: (1) technical to non-technical abstract generation, where models achieve high BERTScore (0.85+ F1); (2) scientific claim extraction, where fine-tuned models outperform base models by 100\% relative improvement; and (3) investigation proposal extraction, showing 90\%+ improvement with fine-tuning. We introduce novel LLM-based evaluation metrics for robust assessment of claim/proposal extraction quality. As the largest scientific claim dataset to date -- with an estimated 2.8 million claims across all STEM disciplines funded by the NSF -- \DatasetName~enables new opportunities for claim verification and meta-scientific research. We publicly release all datasets, trained models, and evaluation code to facilitate further research.
 \end{abstract}
 
 
@@ -135,7 +135,7 @@ We present \DatasetName, a large-scale dataset for scientific claim extraction d
     \caption{A sample record from our \DatasetName~dataset. Each record contains 1) Award ID and title, 2) NSF Directorate, 3) Technical and non-technical abstracts, 4) Scientific Claims, 5) Investigation Proposals, and 6) Associated publications, when present.}
     \label{fig:sample-record}
 \end{figure}
-The overall growth rate of scientific publications is estimated to be 4\% annually, with a doubling time of 17 years~\cite{Bornmann2021}. Within this deluge, researchers and reviewers struggle to separate substantiated claims from spurious ones—whether it's the ``quantum supremacy'' assertions in computing, the short-lived excitement over LK-99 superconductors\footnote[3]{for an entertaining digression c.f., \url{https://en.wikipedia.org/wiki/LK-99}}, or the misunderstanding surrounding microplastic leaches from black plastic spatulas\footnote[4]{c.f., \url{https://nationalpost.com/news/canada/black-plastic}}. Manual verification of ever growing body of scientific claims has become intractable, yet the economic and societal consequences of unverified  claims are increasingly severe. 
+The overall growth rate of scientific publications is estimated to be 4\% annually, with a doubling time of 17 years~\cite{Bornmann2021}. Within this deluge, researchers, reviewers, and the general public struggle to separate substantiated claims from spurious ones—whether it is the ``quantum supremacy'' assertions in computing, the short-lived excitement over LK-99 superconductors\footnote[3]{for an entertaining digression c.f., \url{https://en.wikipedia.org/wiki/LK-99}}, or the misunderstanding surrounding microplastic leaches from black plastic spatulas\footnote[4]{c.f., \url{https://nationalpost.com/news/canada/black-plastic}}. Manual verification of ever growing body of scientific claims has become intractable, yet the economic and societal consequences of unverified  claims are increasingly severe. 
 
 \begin{table*}[t]
 \centering
@@ -163,7 +163,7 @@ SciFACT-Open~\cite{wadden-etal-2022}& 279 & 500K & Research papers & Biomedical 
 \textbf{\DatasetName~(ours)} & \textbf{2.8M}\footnotemark[1] & \textbf{400K} & \textbf{NSF award abstracts} & \textbf{All Science \& Math} \\
 \bottomrule
 \end{tabular}
-\caption{This table comparison clearly illustrates the scale advantage of NSF-SciFy over existing scientific claim verification datasets. While previous datasets like SciFACT and PubHEALTH contain at most thousands of claims from published research papers or fact-checking sources, our \DatasetNameMatSci~dataset contributes 114K claims from 16K materials science grant abstracts. The full \DatasetName~dataset represents an order-of-magnitude increase with an estimated 2.8M claims across 400K abstracts spanning all science \& math disciplines. This work introduces grant proposals as a novel, untapped source for scientific claim extraction, complementing existing approaches that focus on published literature, news articles, or social media content.}
+\caption{This table comparison clearly illustrates the scale advantage of NSF-SciFy over existing scientific claim verification datasets. While previous datasets like SciFACT and PubHEALTH contain at most thousands of claims from published research papers or fact-checking sources, our \DatasetNameMatSci~dataset contributes 114K claims from 16K materials science grant abstracts. The full \DatasetName~dataset represents an order-of-magnitude increase with an estimated 2.8M claims across 400K abstracts spanning all science \& math disciplines. This work introduces grant abstracts as a novel, untapped source for scientific claim extraction, complementing existing approaches that focus on published literature, news articles, or social media content.}
 \label{tab:datasets}
 \end{table*}
 
@@ -180,16 +180,16 @@ We introduce \DatasetName, a comprehensive dataset of claims and investigation p
 
 While not this focus of this paper, grant award abstracts, additionally, provide a unique opportunity to study the relationship between what researchers claim and what they propose to investigate. This could offer valuable insights into scientific practice and the evolution of research questions.
 
-In this paper, we make the following contributions: (1) We introduce \DatasetName, the largest scientific claim dataset to date with over 2.8M claims extracted from 400K NSF award abstracts, establishing grant proposals as a novel source for scientific claim extraction; (2) We create two distinct subsets -- \DatasetName~covering all scientific disciplines funded by the NSF and \DatasetNameMatSci~focusing exclusively on materials science with 114K extracted claims from 16K abstracts; (3) We develop a zero-shot prompting approach for joint extraction of scientific claims and investigation proposals as a way to bootstrap large-scale scientific claim dataset; (4) We present novel evaluation metrics for claim/proposal extraction based on LLM judgments, showing that fine-tuned models significantly outperform base models; and (5) Finally, we release all datasets and trained models from our work for unfettered research and commercial use. Our dataset and methods enable new opportunities for large-scale claim verification, scientific discovery tracking, and meta-scientific research.
+In this paper, we make the following contributions: (1) We introduce \DatasetName, the largest scientific claim dataset to date with an estimated 2.8M claims extracted from 400K NSF award abstracts, establishing grant proposals as a novel source for scientific claim extraction; (2) As a precursor to \DatasetName~and, a current offering, we create \DatasetNameMatSci~focusing exclusively on materials science with 114K extracted claims from 16K abstracts. This is the first materials science claim dataset and, in number of extracted claims, this alone is an order of magnitude bigger than the largest publicly available claim dataset; (3) We develop a zero-shot prompting approach for joint extraction of scientific claims and investigation proposals as a scalable way to bootstrap large-scale scientific claim datasets; (4) We present novel evaluation metrics for claim/proposal extraction based on LLM judgments, showing that fine-tuned models significantly outperform base models; and (5) Finally, we release all datasets and trained models from our work for unfettered research and commercial use. Our dataset and methods enable new opportunities for large-scale claim verification, scientific discovery tracking, and meta-scientific research.
 
 \section{Related Work}
 \label{sec:related-work}
 
-Scientific claim extraction and verification has emerged as an important research area as the volume of scientific literature has grown exponentially. Previous work has primarily focused on claims from published papers, fact-checking sites, and news articles.
+Scientific claim extraction and verification has emerged as an important research area as the volume of scientific literature continues to grow exponentially. Previous work has primarily focused on claims from published papers, fact-checking sites, and news articles.
 
 \paragraph{Scientific Claim Datasets} Several datasets have been developed for scientific claim verification, but all have focused on claims from published literature, while we undertake the study of grant award abstracts. SciFACT \cite{wadden-etal-2020} contains 1,400 scientific claims derived from research papers in the biomedical domain. PubHEALTH \cite{kotonya-toni-2020} includes 11,800 claims from journalists and fact-checkers in public health. CLIMATE-FEVER \cite{diggelmann-etal-2020} compiled 1,500 claims from news articles about climate change. HealthVer \cite{sarrouti-etal-2021} extracted 1,800 claims from search queries related to health topics. COVID-Fact \cite{saakyan-etal-2021} and CoVERT \cite{mohr-etal-2022} focused on COVID-19 related claims from social media. SciFact-Open \cite{wadden-etal-2022} expanded the original SciFact dataset using information retrieval pooling, yet it still remains health-care focused and a few orders of magnitude smaller than our largest dataset.
 
-Table \ref{tab:datasets} situates existing scientific claim datasets with our \DatasetName~datasets, highlighting the significantly larger scale of our contribution (estimated 2.8 million claims in \DatasetName~and 114,000 claims in \DatasetNameMatSci), broad topic coverage (all of science and math), and novelty of data source (grants). See Figure~\ref{fig:award-distribution}.
+Table \ref{tab:datasets} situates existing scientific claim datasets with our \DatasetName~datasets, highlighting the significantly larger scale of our contribution (estimated 2.8 million claims in \DatasetName~and 114,000 claims in \DatasetNameMatSci), broad topic coverage (all of science and math), and novelty of data source (grant abstracts). See Figure~\ref{fig:award-distribution}.
 
 \paragraph{Meta Science and Social Science} Previous works have examined grants data in social science and meta-science contexts. For example,~\citet{park2024} examine the relationship between interdisciplinary grants and the impact of papers they support and~\citet{xu2022} study the influence of research funding on team structure using grant data. While these are tenuously connected to our work, we list them for the sake of completeness.
 \begin{figure}[t]
@@ -201,21 +201,21 @@ Table \ref{tab:datasets} situates existing scientific claim datasets with our \D
 \begin{figure*}[h!]
     \centering
     \includegraphics[width=1\linewidth]{images/tsne-specter-stel.png}
-    \caption{The t-SNE plot of compaing content embeddings from SPECTER \cite{cohan-etal-2020-specter} and style embeddings from STEL \cite{patel2025} for technical and non-technical abstracts in \DatasetNameMatSci. The somewhat clear separation between technical and non-technical abstracts when using style embeddings indicate marked stylistic differences between the two kinds abstracts.}
+    \caption{The t-SNE plot of comparing content embeddings from SPECTER \cite{cohan-etal-2020-specter} and style embeddings from STEL \cite{patel2025} for technical and non-technical abstracts in \DatasetNameMatSci. The somewhat clear separation between technical and non-technical abstracts when using style embeddings indicate marked stylistic differences between the two kinds abstracts.}
     \label{fig:tsne-specter-stel}
 \end{figure*}
 \section{Building \DatasetName}
 
 \subsection{Data Collection}
-We downloaded the entire NSF Awards database in XML format, containing more than 0.5 million awards from 1970 through September 2024. After parsing, we obtained 412,155 parseable awards, which we call \DatasetName. While we leave comprehensive processing of the full \DatasetName~dataset for future versions of this preprint, we make the parsed awards available in JSON format for anyone immediately interested.
+We downloaded the entire NSF Awards database\footnote{\url{https://www.nsf.gov/awardsearch/advancedSearch.jsp}} in XML format, containing more than 0.5 million awards from 1970 through September 2024. After parsing, we obtained 412,155 parseable awards, which we call \DatasetName. While we leave comprehensive processing of the full \DatasetName~dataset for future versions of this preprint, we make the parsed awards available for anyone immediately interested\footnote{Available at \url{https://huggingface.co/darpa-scify}}.
 
-In this paper, we focus on all awards from the Division of Materials Research (DMR), which we call \DatasetNameMatSci. This subset contains 16,031 awards, representing approximately 3.2\% of the entire NSF awards database. We chose materials science as our initial focus due to its interdisciplinary nature and technological importance.
+In this paper, we focus on all awards from the Division of Materials Research (DMR), which is responsible for most materials science awards at the NSF.  This subset, called \DatasetNameMatSci, contains 16,031 awards, representing approximately 3.2\% of the entire NSF awards database. We chose materials science as our initial focus due to its interdisciplinary nature and technological importance.
 
 \subsection{Data Processing}
 
 As Figure~\ref{fig:sample-record} illustrates, each record in  \DatasetNameMatSci~typically contains:
 \begin{enumerate}[noitemsep,topsep=0pt]
-\item Award ID and title
+\item Award ID, title, and year.
 \item Directorate and division information
 \item Technical abstract
 \item Non-technical abstract (present in $\sim$81\% of awards)
@@ -237,7 +237,7 @@ To extract scientific claims and investigation proposals from the award abstract
 
 We structured the prompt to return a JSON object containing the award ID, technical abstract, non-technical abstract, a list of verifiable claims, and a list of investigation proposals. To maintain consistency and quality, we set temperature to zero for all extractions. See Appendix~\ref{appendix:claude-claim-extraction} for the exact prompt and Appendix~\ref{appendix:claim-IP-examples} for sample claims and investigation proposals.
 
-Our analysis showed that jointly extracting claims and investigation proposals helped maintain the relevance of extracted claims. When claims were extracted without also extracting investigation proposals, the model often confused forward-looking statements about proposed investigations as factual claims.
+We performed qualitative experiments with several prompt variants and our analysis showed that jointly extracting claims and investigation proposals helped maintain the relevance of extracted claims. When claims were extracted without also extracting investigation proposals, the model often confused forward-looking statements about proposed investigations as factual claims.
 
 \section{Dataset Analysis}
 \paragraph{\DatasetName} The full dataset contains 412,155 award abstracts spanning from 1970 to 2024, with an estimated 2.8 million scientific claims and corresponding investigation proposals.
@@ -253,7 +253,7 @@ Our analysis showed that jointly extracting claims and investigation proposals h
 \subsection{Technical vs. Non-Technical Abstracts}
 We investigated the differences between technical and non-technical abstracts in our dataset. Using a symmetric BLEU score to measure textual similarity between paired abstracts, we found that only 202 (1.5\%) out of 13,025 technical/non-technical abstract pairs had a similarity score greater than 0.6, suggesting that the non-technical abstracts are not simply copied from the technical abstracts.
 
-We further explored the stylistic differences between technical and non-technical abstracts using pre-trained document embedding models. Figure~\ref{fig:tsne-specter-stel} compares content embeddings from SPECTER \cite{cohan-etal-2020-specter} and style embeddings from STEL \cite{patel2025}. Using these embeddings with a linear SVM classifier, we achieved F1 scores of 90.99 (SPECTER), 88.42 (STEL), and 89.99 (concatenated), demonstrating that the abstracts are distinguishable both in content and style.
+Since grant abstracts are previously unexamined in literature, we further investigated the stylistic differences between technical and non-technical abstracts using pre-trained document embedding models. Figure~\ref{fig:tsne-specter-stel} compares content embeddings from SPECTER \cite{cohan-etal-2020-specter} and style embeddings from STEL \cite{patel2025}. Using these embeddings with a linear SVM classifier, we achieved F1 scores of 90.99 (SPECTER), 88.42 (STEL), and 89.99 (concatenated), demonstrating that the abstracts are distinguishable both in content and style.
 
 \section{Tasks, Metrics, and Experiments}
 
@@ -326,7 +326,7 @@ Analogously, for Task 3 -- extraction of investigation proposals -- we define pr
 
 \section{Results}
 
-\subsection{Technical to Non-technical Abstract Generation}
+\subsection{Non-technical Abstract Generation}
 Table \ref{tab:eval_tech2nontech} shows the results for Task 1. Both Mistral and Qwen models demonstrated strong performance, with fine-tuning providing modest improvements. The Mistral model outperformed Qwen on almost all metrics, achieving a BERTScore-F1 of 0.8561 after fine-tuning (+0.36\% relative improvement). ROUGE scores were generally low (0.01-0.22), reflecting the stylistic differences between technical and non-technical abstracts.
 
 
@@ -412,7 +412,7 @@ To foster research on large-scale claim extraction, we are releasing our dataset
 \begin{itemize}[noitemsep,topsep=0pt]
 \item \DatasetNameMatSci: Materials Science subset with extracted claims, investigation proposals, and resolved publication information.
 \item \DatasetName: Similar in content to~\DatasetNameMatSci, but a larger superset spanning all of NSF awards database. The key difference is the claims and investigation proposals are extracted from our finetuned models instead of frontier LLMs.
-\item Our best finetuned model checkpoints for extraction of claims and investigation proposals on HuggingFace\footnote{at \url{https://huggingface.co/darpa-scify}}.
+\item Our best finetuned model checkpoints for extraction of claims and investigation proposals trained on \DatasetNameMatSci~ on HuggingFace\footnote{at \url{https://huggingface.co/darpa-scify}}.
 \end{itemize}
 
 Future work could expand to other funding agencies, develop specialized claim verification systems for grant proposals, and explore the relationship between proposed investigations and eventual research outcomes.
