@@ -6,6 +6,7 @@
 \newcommand{\NSF}{National Science Foundation}
 \documentclass[11pt]{article}
 
+\usepackage[table]{xcolor}
 % Change "review" to "final" to generate the final (sometimes called camera-ready) version.
 % Change to "preprint" to generate a non-anonymous version with page numbers.
 \usepackage[preprint]{acl}
@@ -42,12 +43,12 @@
 %\setlength\titlebox{<dim>}
 %
 % and set <dim> to something 5cm or larger.
-\usepackage{xcolor}
+
 \definecolor{darkgreen}{rgb}{0,0.5,0}
 \usepackage{enumitem}
 \usepackage{todonotes}
 \usepackage{booktabs}
-\usepackage[table]{xcolor}
+
 \usepackage[symbol]{footmisc}
 \usepackage{mdframed}
 \usepackage{listings}
@@ -412,13 +413,13 @@ To foster research on large-scale claim extraction, we are releasing our dataset
 \begin{itemize}[noitemsep,topsep=0pt]
 \item \DatasetNameMatSci: Materials Science subset with extracted claims, investigation proposals, and resolved publication information.
 \item \DatasetName: Similar in content to~\DatasetNameMatSci, but a larger superset spanning all of NSF awards database. The key difference is the claims and investigation proposals are extracted from our finetuned models instead of frontier LLMs.
-\item Our best finetuned model checkpoints for extraction of claims and investigation proposals trained on \DatasetNameMatSci~ on HuggingFace\footnote{at \url{https://huggingface.co/darpa-scify}}.
+\item Our best finetuned model checkpoints for extraction of claims and investigation proposals on HuggingFace\footnote{at \url{https://huggingface.co/darpa-scify}}.
 \end{itemize}
 
 Future work could expand to other funding agencies, develop specialized claim verification systems for grant proposals, and explore the relationship between proposed investigations and eventual research outcomes.
 
 \section*{Acknowledgments}
-The authors would like to acknowledge Defense Advanced Research Projects Agency’s (DARPA) SciFy program (Agreement No. \texttt{HR00112520300}) for funding this research. We also thank the National Science Foundation (NSF) for making award data publicly available, enabling this research. Any opinions, findings and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the official policy, position, or views of the National Science Foundation, DARPA, the Department of Defense, or the U.S. Government.
+The authors would like to acknowledge the Defense Advanced Research Projects Agency (DARPA) SciFy program (Agreement No. \texttt{HR00112520300}) for funding this research. We also thank the National Science Foundation (NSF) for making award data publicly available, enabling this research. Any opinions, findings and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the official policy, position, or views of the National Science Foundation, DARPA, the Department of Defense, or the U.S. Government.
 
 % Bibliography entries for the entire Anthology, followed by custom entries
 %\bibliography{anthology,custom}
@@ -482,7 +483,7 @@ Tables~\ref{tab:claim-examples} and~\ref{tab:ip-examples} provide a sampling of 
          \textbf{Award ID} & \textbf{Title} & \textbf{Extracted Claims}\\
          \midrule
          \href{https://www.nsf.gov/awardsearch/showAward?AWD_ID=2324035&HistoricalAwards=false}{2324035} & DMREF: Developing and Harnessing the Platform of Quasi-One-Dimensional Topological Materials for Novel Functionalities and Devices & \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=json]
+\begin{lstlisting}
 [
     "Topological insulators are electrically insulating in the bulk but host conductive surface states that are immune to impurities.",
     "Current TI materials face critical challenges that limit their potential.",
@@ -493,7 +494,7 @@ Tables~\ref{tab:claim-examples} and~\ref{tab:ip-examples} provide a sampling of 
 \end{lstlisting}
 \end{minipage} \\
          \href{https://www.nsf.gov/awardsearch/showAward?AWD_ID=9814055&HistoricalAwards=false}{9814055} & Kinks and Surface Potentials & \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=json]
+\begin{lstlisting}
 [
     "Atomically flat terraced surfaces for thin TEM samples can be prepared under moderate (10-7 Torr) vacuum conditions by annealing in oxygen or vacuum for materials such as sapphire, SiC and MgO.",
     "\"Forbidden\" Bragg reflections arise from the stacking fault between partial dislocations.",
@@ -503,7 +504,7 @@ Tables~\ref{tab:claim-examples} and~\ref{tab:ip-examples} provide a sampling of 
 \end{lstlisting}
 \end{minipage} \\
          \href{https://www.nsf.gov/awardsearch/showAward?AWD_ID=0821136&HistoricalAwards=false}{0821136} & MRI: Acquisition of an Imaging Spherical Aberration Corrector and a Lorentz Lens for Magnetic Materials Characterization & \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=json]
+\begin{lstlisting}
 [
     "The attainable spatial resolution of uncorrected Lorentz instruments is in the range 10-15 nm.",
     "Delocalization effects cause significant image blurring in uncorrected Lorentz microscopes.",
@@ -531,7 +532,7 @@ Tables~\ref{tab:claim-examples} and~\ref{tab:ip-examples} provide a sampling of 
          \textbf{Award ID} & \textbf{Title} & \textbf{Extracted Investigation Proposals}\\
          \midrule
          \href{https://www.nsf.gov/awardsearch/showAward?AWD_ID=2324035&HistoricalAwards=false}{2324035} & DMREF: Developing and Harnessing the Platform of Quasi-One-Dimensional Topological Materials for Novel Functionalities and Devices & \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=json]
+\begin{lstlisting}
 [
     "Predict, design, synthesize, and control topological phases in quasi-1D topological materials.",
     "Design and demonstrate emergent materials, functionalities, and devices, including moir\'e quasi-1D TIs, stable and high temperature quantum spin Hall (QSH) insulators, and quantum intelligent sensors.",
@@ -544,7 +545,7 @@ Tables~\ref{tab:claim-examples} and~\ref{tab:ip-examples} provide a sampling of 
 \end{lstlisting}
 \end{minipage} \\
          \href{https://www.nsf.gov/awardsearch/showAward?AWD_ID=9814055&HistoricalAwards=false}{9814055} & Kinks and Surface Potentials & \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=json]
+\begin{lstlisting}
 [
     "Observe dislocation kinks by atomic resolution TEM in materials such as sapphire, SiC and MgO.",
     "Use \"forbidden\" Bragg reflections to form lattice images without surface noise.",
@@ -556,7 +557,7 @@ Tables~\ref{tab:claim-examples} and~\ref{tab:ip-examples} provide a sampling of 
 \end{lstlisting}
 \end{minipage} \\
          \href{https://www.nsf.gov/awardsearch/showAward?AWD_ID=0821136&HistoricalAwards=false}{0821136} & MRI: Acquisition of an Imaging Spherical Aberration Corrector and a Lorentz Lens for Magnetic Materials Characterization & \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=json]
+\begin{lstlisting}
 [
     "Acquire an imaging spherical aberration corrector and a Lorentz lens for magnetic materials characterization.",
     "Add these components to an existing FEI Titan 80-300 TEM.",
