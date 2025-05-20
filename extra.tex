@@ -1,0 +1,40 @@
+\section{Prompt for Error Analysis}
+\label{appendix:error_analysis_prompt}
+\begin{mdframed}[backgroundcolor=blue!20]
+\noindent Given the following abstract, and the current extracted verifiable claims, please check if all the verifiable claims are from at least one of the abstract, and also how much verifiable claims in the abstract are covered in the extracted verifiable claims. Also analyze what categories of claims are not extracted and list them.\\
+
+\noindent Here is the definition of verifiable claims: verifiable\_claims are statements that the abstract claims to be true or states as an assumption explicitly or implicitly.\\
+
+\noindent Your job is do the following steps:\\
+\noindent 1. For each claim, find the sentence that it correspond to, and decide if it is precise to the abstract.
+\noindent 2. Go through the abstract one sentence by one sentence, and check if there are claims in the sentence not included in the verifiable\_claims. This is to get the claims covered, only look for scientific claims which are in the categories provided for you.
+\noindent 3. For each verifiable\_claim provided to you, if it is wrong, summarize why it is not aligned with the abstract.
+\begin{lstlisting}
+ABSTRACT:
+[[ABSTRACT]]
+
+VERIFIABLE CLAIMS:
+[[VERIFIABLE_CLAIMS]]
+
+CLAIM CATEGORIES:
+[[CLAIM_CATEGORIES]]
+\end{lstlisting}
+After doing the analysis in any format you prefer, please additionally output as follows in a code block:\\
+
+\begin{lstlisting}
+FINAL OUTPUT
+```json
+{
+    "current claims": [ // analyze each claim given to you
+        {"claim": "<claim1>", "correct": "<yes/no>", "reasoning": "<reasoning for why this claim is correctly/incorrectly extracted according to the abstract>"},
+        {"claim": "<claim2>", "correct": "<yes/no>", "reasoning": "<reasoning for why this claim is correctly/incorrectly extracted according to the abstract>"},
+        ...
+    ],
+    "extra claims": [ // only look for claims that are in one of the claim categories and not yet covered.
+        {"claim": "<claim1>", "original sentence": "<verbatim copy of the original sentence in the abstract that supports this claim>"},
+        {"claim": "<claim2>", "original sentence": "<verbatim copy of the original sentence in the abstract that supports this claim>"},
+        ...
+    ]
+}
+\end{lstlisting}
+\end{mdframed}

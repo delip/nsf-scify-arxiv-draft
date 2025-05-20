@@ -2,6 +2,7 @@
 \pdfoutput=1
 % In particular, the hyperref package requires pdfLaTeX in order to break URLs across lines.
 \newcommand{\DatasetName}{\textsc{NSF-SciFy}}
+\newcommand{\DatasetNameTwentyK}{\textsc{NSF-SciFy-20K}}
 \newcommand{\DatasetNameMatSci}{\textsc{NSF-SciFy-MatSci}}
 \newcommand{\NSF}{National Science Foundation}
 \documentclass[11pt]{article}
@@ -48,7 +49,7 @@
 \usepackage{enumitem}
 \usepackage{todonotes}
 \usepackage{booktabs}
-
+\usepackage{sparklines}
 \usepackage[symbol]{footmisc}
 \usepackage{mdframed}
 \usepackage{listings}
@@ -57,8 +58,23 @@ basicstyle=\small\ttfamily,
 columns=flexible,
 breaklines=true
 }
-
+\usepackage{float}
 \usepackage{amsmath}
+
+\usepackage[most]{tcolorbox}
+\tcbset{
+  samplebox/.style={
+    colback=white,
+    colframe=black,
+    boxrule=0.5pt,
+    left=1em,
+    right=1em,
+    top=1em,
+    bottom=1em,
+    arc=2pt,
+    fonttitle=\bfseries
+  }
+}
 
 \title{\DatasetName: Mining the NSF Awards Database for Scientific Claims}
 
@@ -228,7 +244,7 @@ As Figure~\ref{fig:sample-record} illustrates, each record in  \DatasetNameMatSc
 The practice of updating awards with resulting publications is relatively recent, primarily occurring from 2014 onwards. For awards where publications are present, we extracted the DOIs and resolved them to obtain titles, abstracts, and publication URLs.
 
 \subsection{Claim and Investigation Proposal Extraction}
-
+\label{sec:claude-claim-extraction}
 To extract scientific claims and investigation proposals from the award abstracts, we developed a zero-shot prompting approach using Anthropic's Claude-3.5\footnote{\texttt{Claude-3.5-Sonnet-20240620} accessed between Sep-Oct. 2024, to be specific} model. Our prompt instructed the model to identify two types of statements:
 
 \begin{enumerate}[noitemsep,topsep=0pt]
@@ -251,24 +267,47 @@ We performed qualitative experiments with several prompt variants and our analys
 \item 2,953 awards with linked publications (18.4\% of the dataset). Such awards had anywhere between 1 -- 4 publications.
 \end{itemize}
 
+\paragraph{\DatasetNameTwentyK} For building models across all \NSF~directorates, we take 20,000 sample subset of \DatasetName, by stratifying across the following directorates: Mathematical and Physical Sciences (MPS), Geological Sciences (GEO), Engineering (ENG), Computer and Information Science and Engineering (CSE), and Biological Sciences (BIO).
+
+
+
 \subsection{Technical vs. Non-Technical Abstracts}
 We investigated the differences between technical and non-technical abstracts in our dataset. Using a symmetric BLEU score to measure textual similarity between paired abstracts, we found that only 202 (1.5\%) out of 13,025 technical/non-technical abstract pairs had a similarity score greater than 0.6, suggesting that the non-technical abstracts are not simply copied from the technical abstracts.
 
 Since grant abstracts are previously unexamined in literature, we further investigated the stylistic differences between technical and non-technical abstracts using pre-trained document embedding models. Figure~\ref{fig:tsne-specter-stel} compares content embeddings from SPECTER \cite{cohan-etal-2020-specter} and style embeddings from STEL \cite{patel2025}. Using these embeddings with a linear SVM classifier, we achieved F1 scores of 90.99 (SPECTER), 88.42 (STEL), and 89.99 (concatenated), demonstrating that the abstracts are distinguishable both in content and style.
 
+\subsection{A Taxonomy of Scientific Claims in NSF Award Abstracts}
+\label{sec:claim-taxonomy}
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{images/category_treemap.pdf}
+    \caption{A treemap of the scientific claim categories in NSF awards. As one would expect in grant applications, the most common claim type is ``Capability/Application of Technology/Method'' (32.8\%), followed by ``Statement of Problem/Knowledge Gap'' (21.0\%) and ``Observed Phenomenon/Property'' (18.9\%). See Section~\ref{sec:claim-taxonomy} for descriptions of these categories.}
+    \label{fig:claim-category-treemap}
+\end{figure}
+To understand the nature of assertions made in NSF Award Abstracts, we analyzed and grouped 810 extracted claims over a stratified sample of 120 awards spanning 5 NSF directorates -- MPS, GEO, ENG, CSE, and BIO -- resulting in the identification of eight distinct categories. These categories encompass a range of scientific statements: \textbf{Established Scientific Fact/Principle} refers to claims that state well-accepted scientific laws or widely known facts. \textbf{Observed Phenomenon/Property} includes claims describing natural phenomena or material properties that have been observed. Claims detailing the function, potential, or application of a specific technology, method, or material fall under \textbf{Capability/Application of Technology/Method}. \textbf{Hypothesis/Theoretical Prediction} categorizes claims that propose theoretical explanations, predictions, or hypotheses requiring further verification. Specific results, findings, or statements about measurability are grouped under \textbf{Experimental Result/Finding/Measurability}. \textbf{Statement of Problem/Knowledge Gap} highlights existing problems, limitations, or gaps in current knowledge or technology. Claims that define terms or classify entities are categorized as \textbf{Definition/Classification}. Finally, \textbf{Process/Mechanism Description} includes claims that describe physical or chemical processes or mechanisms. Figure~\ref{fig:claim-category-treemap} shows the distribution of these claim types.
+\todo{Add appendix section with examples}
+
+\subsection{Evaluating the Extracted Verifiable Claims}
+\label{sec:eval-claude-claims}
+To evaluate how good the claim extraction from Section~\ref{sec:claude-claim-extraction} is, we annotated the abstracts in the 120 sampled awards (see Section~\ref{sec:claim-taxonomy}) with claims and computed precision and recall. Figure~\ref{fig:syndata_eval} summarizes the precision, recall, and f-scores of the extracted claims for all 6 areas of interest. The areas of interest include, Materials Science (DMR) Mathematical and Physical Sciences except Materials Science (MPS-DMR), Geological Sciences (GEO), Engineering (ENG), Computer and Information Science and Engineering (CSE), and Biological Sciences (BIO). We notice from Figure~\ref{fig:syndata_eval} a near perfect precision for the extracted claims. Although our LLM-derived dataset suffers from recall, we hope that training on a massive corpus of high quality claims will result in useful for claim extraction. We consider this result as directional and skip a similar evaluation for investigation proposals.
+\begin{figure}[t!]
+    \centering
+    \includegraphics[width=1\linewidth]{images/syndata_eval.pdf}
+    \caption{A Cleveland dot plot of precision, recall, and f1-score across different NSF Award Areas for claims extracted via Claude (See Section~\ref{sec:claude-claim-extraction}). Error bars denote standard deviation (bootstrap N=1000). See Section~\ref{sec:eval-claude-claims} for analysis.}
+    \label{fig:syndata_eval}
+\end{figure}
 \section{Tasks, Metrics, and Experiments}
+\label{sec:tasks-metrics-experiments}
 
 We designed three NLP tasks to evaluate the utility of our dataset and establish baseline performance:
 
-\begin{itemize}[noitemsep, wide, labelwidth=!, labelindent=0pt]
-\item [\textbf{Task 1 -}] \textbf{Non-technical Abstract Generation:} Converting technical abstracts into non-technical language.
-\item [\textbf{Task 2 -}]\textbf{Abstract to Scientific Claims:} Extracting scientific claims from abstracts.
-\item [\textbf{Task 3 -}]\textbf{Abstract to Investigation Proposals:} Extracting investigation proposals from abstracts.
-\end{itemize}
+\begin{enumerate}[noitemsep, wide, labelwidth=!, labelindent=0pt]
+\item The \textbf{Non-technical Abstract Generation} task translates dense, technical grant abstracts into accessible language for broader science communication. Motivated by capturing the core scientific essence while navigating stylistic and content differences between technical and lay summaries, this task uses the dataset's paired examples (common in NSF awards) to train models for this nuanced transformation.
+\item The \textbf{Abstract to Scientific Claims Extraction} task automates identifying verifiable assertions—the core of scientific discourse—from grant abstracts, which capture these claims at an early, pre-publication stage. Significant performance gains post-fine-tuning highlight the dataset's effectiveness in teaching models to pinpoint these crucial statements.
+\item The \textbf{Abstract to Investigation Proposals Extraction} task distinguishes aspirational research intentions from established claims, offering a novel analysis of scientific texts. This provides a clearer view of the planned research trajectory by identifying intended activities. It complements claim extraction by presenting a fuller picture of proposed work, from assertions to investigative pathways, again showing significant fine-tuning efficacy due to the dataset's focused nature.
+\end{enumerate}
 
-\subsection{Data Preparation}
 
-Starting with 16,042 processed entries in \DatasetNameMatSci, we removed near-duplicates in technical and non-technical abstracts using trigram Jaccard similarity (threshold > 0.9), resulting in 11,569 data points. We further filtered cases where character-level 10-gram similarity between an entry's technical and non-technical abstracts exceeded 0.6, yielding 11,141 final data points. We split this dataset into train/validation/test sets with 8,641/500/2,000 examples, respectively.
 
 \begin{table}[t]
 \centering
@@ -292,15 +331,13 @@ ROUGE-L-sum         & 0.2166 \textcolor{darkgreen}{(+2.45\% $\uparrow$)} & 0.207
 \label{tab:eval_tech2nontech}
 \end{table}
 
-\subsection{Models and Training}
-
-To explore the four tasks, we finetuned two 7B parameter language models:
+To explore the three tasks, we finetuned two 7B parameter language models:
 \begin{itemize}[noitemsep,topsep=0pt]
 \item \texttt{Mistral-7B-instruct-v0.3}~\cite{jiang2023mistral7b}
 \item \texttt{Qwen2.5-7B-Instruct}~\cite{qwen2}
 \end{itemize}
+\noindent Details about the finetuning can be found in Appendix~\ref{appendix:finetune-details}.
 
-For fine-tuning, we used LoRA~\cite{hu2021lora} with rank=128, lora\_alpha=64 and a learning rate of 1e-5 scheduled linearly. We updated the query, key, value, and output projection layers, as well as MLP gate, up, and down projections. We ran the finetuning on an A100 GPU for 3 epochs, 100 warmup steps, and a batch size of 2 with 4 accumulated steps. 
 
 \subsection{Evaluation Metrics}
 
@@ -392,6 +429,63 @@ F1
 }
 \end{table}
 
+Since Mistral models seemed to have an edge over the Qwen2.5 models for these tasks, we also trained a Mistral only version of on the \DatasetNameTwentyK~subset which spans all NSF directorates. The results for that can be found in Appendix~\ref{appendix:20k-eval}.
+
+\section{Error Analysis}
+\label{sec:error-analysis}
+We consider the claim extraction task as a canonical task for performing error analysis. To do so, we consider another 120 awards from the test portion of \DatasetNameMatSci~and \DatasetNameTwentyK. These were stratified sampled across the five areas of interest (similar to Section ~\ref{sec:eval-claude-claims}). We then generate the claims using a Mistral-7B model finetuned on \DatasetNameTwentyK, resulting in 802 claims. A careful examination revealed around 2.6\% of the generated claims were incorrect. To dive deeper into these error, we categorized the erroneous claims into 5 categories.
+
+\paragraph{1. Overconfidence: }
+The claim can be overconfident about information that has qualifiers in the supporting document text (award abstract).
+
+{\small
+\begin{tcolorbox}[title={\textbf{Award ID:} 9820570}]
+\textbf{Extracted Claim:} The research areas include knot theory, immiscible fluids and geodesic nets, ergodic theory, commutative algebra and vector-valued forms.\\
+\textbf{Analysis:} The abstract states 'probably in the areas of,' indicating potential areas, not certainty.
+\end{tcolorbox}
+}
+
+\paragraph{2. Mixing Information:}
+The claim can mix information from two sentences together to form wrong information.
+
+{\small
+\begin{tcolorbox}[title={\textbf{Award ID:} 1205671}]
+\textbf{Extracted Claim:} The SEAQUEST experiment at Fermilab has successfully measured the asymmetry of up and down anti-quarks in the nucleon.\\
+\textbf{Analysis:} The abstract mentions that SEAQUEST will follow the successful E866 measurement with more precise data, and thus it does not say SEAQUEST has already successfully measured that, but the success is describing the previous E866.
+\end{tcolorbox}
+}
+
+\paragraph{3. Overgeneralization:}
+The claim can overgeneralize what the supporting document implies.
+
+{\small
+\begin{tcolorbox}[title={\textbf{Award ID:} 0957482}]
+\textbf{Extracted Claim:} The methodology is potentially environmentally benign.\\
+\textbf{Analysis:} The abstract mentions non-dangerous chemicals but does not specifically state that the methodology is environmentally benign.
+\end{tcolorbox}
+}
+
+\paragraph{4. Information Omission:}
+The claim might omit important information from the abstract and thus the meaning is changed.
+
+{\small
+\begin{tcolorbox}[title={\textbf{Award ID:} 9409461}]
+\textbf{Extracted Claim:} Frequency-domain techniques can display trade-offs between output performance and sensitivity reduction.\\
+\textbf{Analysis:} The claim frames output performance and sensitivity reduction as two separate quantities and leaves out bandwidth, so it does not accurately reflect the abstract.
+\end{tcolorbox}
+}
+
+\paragraph{5. Hallucinations about Administrative Metadata:}
+The model can sometimes hallucinate claims regarding where the funding is from and which institutions are included. While hallucination is a serious issue, it is worth noting that for this dataset and model scientific claims seem to be rarely hallucinated. In our study, all hallucinations were connected with administrative metadata.
+
+\begin{tcolorbox}[title={\textbf{Award ID:} 0542751}]
+\textbf{Claim:} The award is funded under the American Recovery and Reinvestment Act of 2009 (Public Law 111-5).\\
+\textbf{Reasoning:} This claim is not mentioned in the abstract.
+\end{tcolorbox}
+
+To mitigate these errors, uncertainty calibration and prompting strategies can reduce overconfidence and overgeneralization, encouraging the model to reflect source qualifiers. Fine-tuning with more annotated data and enforcing stricter alignment between claims and source text can address mixing information and omission issues. Retrieval-augmented generation and chain-of-thought prompting may also promote better grounding. For hallucinations about administrative metadata, entity verification or output constraints based on structured data can help. Combining these approaches with human-in-the-loop evaluation will further improve claim extraction reliability.
+
+
 \section{Discussion and Conclusion}
 
 In this paper, we introduced \DatasetName, a large-scale dataset of scientific claims and investigation proposals extracted from NSF grant abstracts. Our dataset is significantly larger than previous scientific claim datasets, with an estimated 2.8 million claims across all NSF fields and 114,000 claims in materials science alone.
@@ -409,24 +503,23 @@ The analysis of technical versus non-technical abstracts revealed interesting st
 \item \textbf{Linked outcomes}: For recent grants, the associated publications allow tracking from proposal to result.
 \end{enumerate}
 
-To foster research on large-scale claim extraction, we are releasing our datasets and trained models:
+\section{Reproducibility Statement}
+To foster research on large-scale claim extraction, we are releasing our datasets, training code, and trained models:
 \begin{itemize}[noitemsep,topsep=0pt]
 \item \DatasetNameMatSci: Materials Science subset with extracted claims, investigation proposals, and resolved publication information.
 \item \DatasetName: Similar in content to~\DatasetNameMatSci, but a larger superset spanning all of NSF awards database. The key difference is the claims and investigation proposals are extracted from our finetuned models instead of frontier LLMs.
-\item Our best finetuned model checkpoints for extraction of claims and investigation proposals on HuggingFace\footnote{at \url{https://huggingface.co/darpa-scify}}.
+\item Our best finetuned model checkpoints for extraction of claims and investigation proposals at \_\_\_\footnote{URL withheld for blind-review}.
 \end{itemize}
 
 Future work could expand to other funding agencies, develop specialized claim verification systems for grant proposals, and explore the relationship between proposed investigations and eventual research outcomes.
 
-\section*{Acknowledgments}
-The authors would like to acknowledge the Defense Advanced Research Projects Agency (DARPA) SciFy program (Agreement No. \texttt{HR00112520300}) for funding this research. We also thank the National Science Foundation (NSF) for making award data publicly available, enabling this research. Any opinions, findings and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the official policy, position, or views of the National Science Foundation, DARPA, the Department of Defense, or the U.S. Government.
+%\section*{Acknowledgments}
+%The authors would like to acknowledge the Defense Advanced Research Projects Agency (DARPA) SciFy program (Agreement No. \texttt{HR00112520300}) for funding this research. We also thank the National Science Foundation (NSF) for making award data publicly available, enabling this research. Any opinions, findings and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the official policy, position, or views of the National Science Foundation, DARPA, the Department of Defense, or the U.S. Government.
 
 % Bibliography entries for the entire Anthology, followed by custom entries
 %\bibliography{anthology,custom}
 % Custom bibliography entries only
 \bibliography{main}
-
-\clearpage
 
 \section*{Appendix}
 
@@ -469,6 +562,76 @@ We manually tested the prompt with a few award abstracts to make sure it was opt
 \noindent c1: \{c1\}\\
 \noindent c2: \{c2\}
 \end{mdframed}
+
+
+\section{Finetuning Details}
+\label{appendix:finetune-details}
+\subsection{Data Preparation}
+
+Starting with 16,042 processed entries in \DatasetNameMatSci, we removed near-duplicates in technical and non-technical abstracts using trigram Jaccard similarity (threshold > 0.9), resulting in 11,569 data points. We further filtered cases where character-level 10-gram similarity between an entry's technical and non-technical abstracts exceeded 0.6, yielding 11,141 final data points. We split this dataset into train/validation/test sets with 8,641/500/2,000 examples, respectively.
+
+\subsection{Finetuning Details}
+For fine-tuning, we used LoRA~\cite{hu2021lora} with rank=128, lora\_alpha=64 and a learning rate of 1e-5 scheduled linearly. We updated the query, key, value, and output projection layers, as well as MLP gate, up, and down projections. We ran the finetuning on an A100 GPU for 3 epochs, 100 warmup steps, and a batch size of 2 with 4 accumulated steps.
+
+\section{Evaluation results for \DatasetNameTwentyK}
+\label{appendix:20k-eval}
+Tables \ref{tab:tech2nontech}, \ref{tab:text2claims}, and \ref{tab:text2ip} summarize the results for the three generation tasks defined in Section~\ref{sec:tasks-metrics-experiments} on \DatasetNameTwentyK.
+
+\begin{table}[H]
+\centering
+{\small
+\begin{tabular}{lrr}
+\toprule
+Model & Base & Finetuned \\
+Metric & & \\
+\midrule
+BERTScore-F1         & 0.8514 $\pm$ 0.0003 & 0.8500 $\pm$ 0.0006 \\
+BERTScore-Precision  & 0.8515 $\pm$ 0.0003 & 0.8513 $\pm$ 0.0007 \\
+BERTScore-Recall     & 0.8516 $\pm$ 0.0003 & 0.8496 $\pm$ 0.0005 \\
+ROUGE-rouge1         & 0.3351 $\pm$ 0.0013 & 0.3141 $\pm$ 0.0023 \\
+ROUGE-rouge2         & 0.0705 $\pm$ 0.0008 & 0.0936 $\pm$ 0.0016 \\
+ROUGE-rougeL         & 0.1773 $\pm$ 0.0008 & 0.1967 $\pm$ 0.0016 \\
+ROUGE-rougeLsum      & 0.1982 $\pm$ 0.0010 & 0.1998 $\pm$ 0.0016 \\
+\bottomrule
+\end{tabular}
+}
+\caption{Technical to Non-Technical Abstract Task: Mistral-7B}
+\label{tab:tech2nontech}
+\end{table}
+
+\begin{table}[H]
+\centering
+{\small
+\begin{tabular}{lrr}
+\toprule
+Model & Base & Finetuned \\
+\midrule
+Precision & 0.4146 $\pm$ 0.0025 & 0.7526 $\pm$ 0.0027 \\
+Recall    & 0.8141 $\pm$ 0.0026 & 0.7354 $\pm$ 0.0026 \\
+F-score   & 0.5247 $\pm$ 0.0025 & 0.7268 $\pm$ 0.0023 \\
+\bottomrule
+\end{tabular}
+}
+\caption{Abstract to Claims Task: Mistral-7B}
+\label{tab:text2claims}
+\end{table}
+
+\begin{table}[H]
+\centering
+{\small
+\begin{tabular}{lrr}
+\toprule
+Model & Base & Finetuned \\
+\midrule
+Precision & 0.6222 $\pm$ 0.0038 & 0.7219 $\pm$ 0.0027 \\
+Recall    & 0.6364 $\pm$ 0.0034 & 0.7359 $\pm$ 0.0029 \\
+F1-score  & 0.5668 $\pm$ 0.0033 & 0.7039 $\pm$ 0.0026 \\
+\bottomrule
+\end{tabular}
+}
+\caption{Abstract to Investigation Proposals Task: Mistral-7B}
+\label{tab:text2ip}
+\end{table}
 
 \section{Examples of Extracted Claims and Investigation Proposals}
 \label{appendix:claim-IP-examples}
@@ -574,6 +737,7 @@ Tables~\ref{tab:claim-examples} and~\ref{tab:ip-examples} provide a sampling of 
     \caption{A sample of extracted investigation proposals from the \DatasetNameMatSci~dataset. Award IDs are hyperlinked to the NSF's Award database.}
     \label{tab:ip-examples}
 \end{table*}
+
 
 \end{document}
 
